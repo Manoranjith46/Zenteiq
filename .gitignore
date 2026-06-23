@@ -2,3 +2,9 @@ node_modules
 dist
 .env
 .DS_Store
+
+
+
+#Added By me Local Only
+AGENT_PROMPT.md
+PLAN.md

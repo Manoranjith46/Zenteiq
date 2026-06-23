@@ -1,4 +1,5 @@
 :root {
+  --primary: #5b6cff;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #162033;
   background: #f4f7fb;
@@ -19,6 +20,7 @@ body {
 
 button,
 input,
+textarea,
 select {
   font: inherit;
 }
@@ -51,6 +53,7 @@ button {
 }
 
 .theme-dark input,
+.theme-dark textarea,
 .theme-dark select {
   background: #101827;
   color: #f7f9fc;
@@ -241,9 +244,116 @@ button {
   color: transparent;
 }
 
+.notification-panel {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  width: 380px;
+  max-height: 500px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(17, 24, 39, 0.15);
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #edf0f5;
+  flex-shrink: 0;
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #162033;
+}
+
+.notification-close {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.notification-list {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 100px;
+}
+
+
+.notification-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f9fafb;
+}
+
+.notification-item::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.notification-alert::before {
+  background: #ef4444;
+}
+
+.notification-success::before {
+  background: #22c55e;
+}
+
+.notification-info::before {
+  background: #3b82f6;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #162033;
+}
+
+.notification-message {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.notification-time {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
 .page-section {
   display: grid;
   gap: 22px;
+  margin-top: 32px;
 }
 
 .hero-card {
@@ -255,6 +365,21 @@ button {
   justify-content: space-between;
   gap: 24px;
   box-shadow: 0 20px 50px rgba(17, 24, 39, 0.06);
+  position: relative;
+  z-index: 5;
+  margin-bottom: 12px;
+}
+
+.hero-card::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(to bottom, rgba(244, 247, 251, 0.8), transparent);
+  pointer-events: none;
+  border-radius: 0 0 28px 28px;
 }
 
 .eyebrow {
@@ -303,6 +428,7 @@ button {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+  position: relative;
 }
 
 .metric-card,
@@ -311,6 +437,7 @@ button {
   border: 1px solid #e5e7eb;
   border-radius: 24px;
   box-shadow: 0 18px 35px rgba(17, 24, 39, 0.04);
+  backdrop-filter: blur(0.5px);
 }
 
 .metric-card {
@@ -345,6 +472,7 @@ button {
   grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.8fr);
   gap: 22px;
   align-items: start;
+  position: relative;
 }
 
 .side-stack {
@@ -391,7 +519,9 @@ button {
 
 select,
 .assignment-form input,
-.assignment-form select {
+.assignment-form select,
+.announcement-form input,
+.announcement-form textarea {
   border: 1px solid #dbe0ea;
   border-radius: 14px;
   padding: 11px 12px;
@@ -491,8 +621,7 @@ select,
   gap: 12px;
 }
 
-.assignment-card,
-.announcement-card {
+.assignment-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 12px;
@@ -501,6 +630,46 @@ select,
   border-radius: 18px;
   padding: 14px;
   background: #fbfdff;
+}
+
+.announcement-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: flex-end;
+  border: 1px solid #edf0f5;
+  border-radius: 18px;
+  padding: 14px;
+  background: #fbfdff;
+}
+
+.announcement-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-button {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.action-button.delete-button:hover {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .assignment-card h3,
@@ -526,13 +695,29 @@ select,
   padding: 2px;
 }
 
-.pin-badge {
-  background: #eef2ff;
+.pin-icon {
+  color: #9ca3af;
+  transition: all 0.3s ease-in-out;
+}
+
+.pin-icon--filled {
   color: #4f46e5;
-  border-radius: 999px;
-  padding: 5px 9px;
-  font-size: 0.75rem;
-  font-weight: 700;
+}
+
+.pin-button {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.pin-button:hover {
+  background-color: rgba(91, 108, 255, 0.1);
 }
 
 .two-column-page {
@@ -561,6 +746,50 @@ select,
   font-weight: 800;
 }
 
+.secondary-button {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: white;
+  color: #374151;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondary-button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.delete-confirm-button {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: #dc2626;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-confirm-button:hover {
+  background: #b91c1c;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.inline-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .form-message {
   border-radius: 14px;
   padding: 10px 12px;
@@ -578,11 +807,11 @@ select,
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(15, 23, 42, 0.55);
+  background: transparent;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 80px 20px;
+  align-items: center;
+  padding: 20px;
 }
 
 .student-modal {
@@ -594,16 +823,82 @@ select,
   box-shadow: 0 30px 70px rgba(15,23,42,0.25);
 }
 
+.announcement-modal {
+  width: min(560px, 100%);
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 30px 70px rgba(15,23,42,0.25);
+}
+
+.announcement-modal h2 {
+  margin: 0 0 18px;
+}
+
+.warning-modal {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 30px 70px rgba(15,23,42,0.25);
+  text-align: center;
+}
+
+.warning-modal h2 {
+  margin: 0 0 14px;
+  font-size: 1.3rem;
+  color: #dc2626;
+}
+
+.warning-modal p {
+  margin: 0 0 24px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.warning-modal button {
+  min-width: 120px;
+}
+
+.announcement-form {
+  display: grid;
+  gap: 14px;
+}
+
+.announcement-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.announcement-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+
 .modal-close {
   position: absolute;
-  top: -12px;
-  right: -12px;
+  top: 16px;
+  right: 16px;
   width: 42px;
   height: 42px;
   border-radius: 50%;
   border: none;
   background: #111827;
   color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #1f2937;
 }
 
 .modal-profile {

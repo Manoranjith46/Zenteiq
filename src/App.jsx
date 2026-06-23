@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Bell, CalendarDays, GraduationCap, Menu, Moon, Search, Sun, X } from 'lucide-react'
+import { Bell, CalendarDays, GraduationCap, Moon, Search, Sun } from 'lucide-react'
 import { announcements, assignments as assignmentSeed, metrics, students } from './data/mockData'
 import { ACADEMIC_TERM_LABEL, CURRENT_FACULTY_USER, REVIEW_STAGE_LABELS, isAtRisk } from './data/canaries'
 import { useLocalStorage } from './hooks/useLocalStorage'
@@ -20,6 +20,14 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [theme, setTheme] = useLocalStorage('campus-theme', 'light')
   const [assignmentItems, setAssignmentItems] = useState(assignmentSeed)
+  const [announcementItems, setAnnouncementItems] = useState(announcements)
+  const [showNotifications, setShowNotifications] = useState(false)
+
+  const notifications = [
+    { id: 1, type: 'alert', title: 'Team Submission Overdue', message: 'Team 5 has not submitted their final report', time: '2 hours ago' },
+    { id: 2, type: 'success', title: 'Review Completed', message: 'Dr. Sharma completed review for Team 3', time: '4 hours ago' },
+    { id: 3, type: 'info', title: 'New Announcement Posted', message: 'Lab maintenance window announced for Friday', time: '1 day ago' }
+  ]
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
@@ -37,6 +45,26 @@ function App() {
     setAssignmentItems([...assignmentItems, { id: Date.now(), completed: false, ...formData }])
   }
 
+  function handleCreateAnnouncement(formData) {
+    setAnnouncementItems((prev) => [{ id: Date.now(), ...formData }, ...prev])
+  }
+
+  function handleTogglePinAnnouncement(id) {
+    setAnnouncementItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, pinned: !item.pinned } : item))
+    )
+  }
+
+  function handleDeleteAnnouncement(id) {
+    setAnnouncementItems((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  function handleEditAnnouncement(id, updatedData) {
+    setAnnouncementItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updatedData } : item))
+    )
+  }
+
   function handleToggleAssignment(id) {
     assignmentItems.find((item) => item.id === id).completed = !assignmentItems.find((item) => item.id === id).completed
     setAssignmentItems(assignmentItems)
@@ -46,7 +74,7 @@ function App() {
     setTheme(theme === 'light' ? 'dark' : 'light')
     document.body.className = theme
   }
-
+  
   return (
     <div className={`app-shell theme-${theme}`}>
       <Sidebar
@@ -67,15 +95,37 @@ function App() {
               <button className="icon-button" onClick={handleThemeToggle} aria-label="Toggle dark mode">
                 {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
               </button>
-              <button className="icon-button notification-button" aria-label="Notifications">
+              <button className="icon-button notification-button" onClick={() => setShowNotifications(!showNotifications)} aria-label="Notifications">
                 <Bell size={18} />
-                <span className="notification-dot">3</span>
+                <span className="notification-dot">{notifications.length}</span>
               </button>
             </div>
           }
         />
 
-        {activeTab = 'dashboard' && (
+        {showNotifications && (
+          <div className="notification-panel">
+            <div className="notification-header">
+              <h3>Notifications</h3>
+              <button className="notification-close" onClick={() => setShowNotifications(false)} aria-label="Close notifications">
+                ✕
+              </button>
+            </div>
+            <div className="notification-list">
+              {notifications.map((notif) => (
+                <div key={notif.id} className={`notification-item notification-${notif.type}`}>
+                  <div className="notification-content">
+                    <p className="notification-title">{notif.title}</p>
+                    <p className="notification-message">{notif.message}</p>
+                    <small className="notification-time">{notif.time}</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'dashboard' && (
           <section className="page-section">
             <div className="hero-card">
               <div>
@@ -132,7 +182,7 @@ function App() {
               </section>
 
               <section className="side-stack">
-                <AnnouncementPanel announcements={announcements} />
+                <AnnouncementPanel announcements={announcementItems} onTogglePin={handleTogglePinAnnouncement} onDelete={handleDeleteAnnouncement} onEdit={handleEditAnnouncement} />
                 <AssignmentList assignments={openItems} onToggle={handleToggleAssignment} />
               </section>
             </div>
@@ -157,7 +207,7 @@ function App() {
 
         {activeTab === 'announcements' && (
           <section className="page-section">
-            <AnnouncementPanel announcements={announcements} expanded />
+            <AnnouncementPanel announcements={announcementItems} expanded onCreate={handleCreateAnnouncement} onTogglePin={handleTogglePinAnnouncement} onDelete={handleDeleteAnnouncement} onEdit={handleEditAnnouncement} />
           </section>
         )}
       </main>

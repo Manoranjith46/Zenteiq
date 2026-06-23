@@ -7,6 +7,11 @@ const navItems = [
 ]
 
 function Sidebar({ isOpen, activeTab, onChangeTab, onClose }) {
+  function handleTabChange(tabId) {
+    onChangeTab(tabId)
+    onClose()
+  }
+
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="brand-row">
@@ -27,7 +32,7 @@ function Sidebar({ isOpen, activeTab, onChangeTab, onClose }) {
             <button
               key={item.id}
               className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => onChangeTab('dashboard')}
+              onClick={() => handleTabChange(item.id)}
             >
               <Icon size={18} />
               {item.label}
